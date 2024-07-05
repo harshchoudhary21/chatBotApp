@@ -2,7 +2,9 @@
 
 ChatRoomApp is an Android application that allows users to join chat rooms, send messages, and interact with other users in real time. It provides a simple and intuitive interface for chatting and connecting with people who share similar interests.
 
+
 **Features**
+
 
 **User Authentication**: Users can sign up and log in using their email and password.
 
@@ -16,13 +18,15 @@ ChatRoomApp is an Android application that allows users to join chat rooms, send
 
 
 
+
 **Getting Started**
 
 1. Clone this repository: git clone https://github.com/harshchoudhary21/chatBotApp.git
 
 2. Open the project in Android Studio.
 
-3.Build and run the app on an emulator or physical device.
+  3.Build and run the app on an emulator or physical device.
+
 
 **Technologies Used**
 
