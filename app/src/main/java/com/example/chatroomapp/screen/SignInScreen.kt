@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,16 +42,25 @@ fun SignInScreen(
     authViewModel: AuthViewModel,
     onNavigateToSignUp: () -> Unit,
     onSignInSuccess: () -> Unit,
+    onNaviGateBack: () -> Unit
 
 ){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val result by authViewModel.authResult.observeAsState()
 
+
     Column (modifier= Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center) {
         //Add a back button to navigate back to the previous screen
+        IconButton(
+            onClick = onNaviGateBack,
+            modifier = Modifier.align(Alignment.Start)
+        ) {
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        }
+
 
 
 
@@ -103,5 +114,5 @@ fun SignInScreen(
 @Preview(showBackground = true)
 @Composable
 fun LoginPreview() {
-    SignInScreen( onNavigateToSignUp = {}, authViewModel =  AuthViewModel(), onSignInSuccess = {})
+    SignInScreen( onNavigateToSignUp = {}, authViewModel =  AuthViewModel(), onSignInSuccess = {}, onNaviGateBack = {})
 }

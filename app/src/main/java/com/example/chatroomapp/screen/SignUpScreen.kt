@@ -9,7 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +36,9 @@ import com.example.chatroomapp.viewModels.AuthViewModel
 @Composable
 fun SignUpScreen(
     authViewModel: AuthViewModel,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNaviGateBack: () -> Unit
+
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -46,6 +52,12 @@ fun SignUpScreen(
         horizontalAlignment = Alignment.CenterHorizontally
 
     ){
+        IconButton(
+            onClick = onNaviGateBack,
+            modifier = Modifier.align(Alignment.Start)
+        ) {
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        }
         Text("SignUp", modifier = Modifier.padding(top = 16.dp,bottom = 32.dp),
             style = TextStyle(
                 fontSize = 32.sp,
@@ -105,5 +117,5 @@ fun SignUpScreen(
 @Preview(showBackground = true)
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen( onNavigateToLogin = {}, authViewModel =  AuthViewModel())
+    SignUpScreen( onNavigateToLogin = {}, authViewModel =  AuthViewModel(), onNaviGateBack = {})
 }

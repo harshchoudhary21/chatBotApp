@@ -10,13 +10,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+
+
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -35,85 +47,123 @@ import com.example.chatroomapp.viewModels.RoomViewModel
 @Composable
 fun ChatRoomListScreen(
     roomViewModel: RoomViewModel = viewModel(),
-    onJoinClicked: (Room) -> Unit
+    onJoinClicked: (Room) -> Unit,
+    onLogout: () -> Unit
+
 ) {
     val rooms by roomViewModel.rooms.observeAsState(emptyList())
+
+
+    val userData by roomViewModel.userData.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top =64.dp, start = 16.dp, end = 16.dp)
-    ) {
-        Text("Chat Rooms", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(16.dp))
+    var showDropdownMenu by remember { mutableStateOf(false) }
 
-        // Display a list of chat rooms
-        LazyColumn {
-            items(rooms) { room ->
-                RoomItem(room = room, onJoinClicked = {onJoinClicked(room)})
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Button to create a new room
-        Button(
-            onClick = {
-                showDialog = true
-
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Create Room")
-        }
-
-
-        if (showDialog){
-            AlertDialog( onDismissRequest = { showDialog = true },
-                title = { Text("Create a new room") },
-                text={
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        singleLine = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "ChatRooms",
+                        fontWeight = FontWeight.Bold
                     )
-                }, confirmButton = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                },
+                actions = {
+                    IconButton(onClick = { showDropdownMenu = true }) {
+                        Icon(Icons.Default.AccountCircle, contentDescription = "Account")
+                    }
+                    DropdownMenu(
+                        expanded = showDropdownMenu,
+                        onDismissRequest = { showDropdownMenu = false }
                     ) {
-                        Button(
-                            onClick = {
-                                if (name.isNotBlank()) {
-                                    roomViewModel.createRoom(name)
-                                    showDialog = false
-                                }
-                            }
-                        ) {
-                            Text("Add")
-                        }
+                        DropdownMenuItem(
+                            text = { Text(userData?.first ?: "Loading...") },
+                            onClick = {}
+                        )
+                        DropdownMenuItem(
+                            text = { Text(userData?.second ?: "Loading...") },
+                            onClick = {}
+                        )
 
-                        Button(
-                            onClick = { showDialog = false }
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(start = 16.dp, end = 16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Display a list of chat rooms
+            LazyColumn {
+                items(rooms) { room ->
+                    RoomItem(room = room, onJoinClicked = { onJoinClicked(room) })
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Button to create a new room
+            Button(
+                onClick = { showDialog = true },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Create Room")
+            }
+
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text("Create a new room") },
+                    text = {
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            singleLine = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        )
+                    },
+                    confirmButton = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Cancel")
+                            Button(
+                                onClick = {
+                                    if (name.isNotBlank()) {
+                                        roomViewModel.createRoom(name)
+                                        showDialog = false
+                                        name = ""
+                                    }
+                                }
+                            ) {
+                                Text("Add")
+                            }
+
+                            Button(
+                                onClick = { showDialog = false }
+                            ) {
+                                Text("Cancel")
+                            }
                         }
                     }
-                })
+                )
+            }
         }
     }
 }
-
 @Preview
 @Composable
 fun RoomListPreview() {
-    ChatRoomListScreen(){}
+    ChatRoomListScreen( onJoinClicked = {}){}
 }
 
 @Composable

@@ -24,8 +24,10 @@ import com.example.chatroomapp.screen.ChatRoomListScreen
 import com.example.chatroomapp.screen.ChatScreen
 import com.example.chatroomapp.screen.SignInScreen
 import com.example.chatroomapp.screen.SignUpScreen
+import com.example.chatroomapp.screen.WelcomeScreen
 import com.example.chatroomapp.ui.theme.ChatRoomAppTheme
 import com.example.chatroomapp.viewModels.AuthViewModel
+import com.example.chatroomapp.viewModels.RoomViewModel
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -53,25 +55,43 @@ fun NavigationGraph(navController: NavHostController,
 ){
     NavHost(
         navController = navController,
-        startDestination = Screen.SignUpScreen.route
+        startDestination = Screen.WelcomeScreen.route
     ){
+        composable(route=Screen.WelcomeScreen.route){
+            WelcomeScreen(
+                onNavigateToLogin = { navController.navigate(Screen.LogInScreen.route) },
+                onNavigateToSignUp = { navController.navigate(Screen.SignUpScreen.route) })
+        }
         composable(route=Screen.SignUpScreen.route){
            SignUpScreen(
-               authViewModel = authViewModel,onNavigateToLogin = { navController.navigate(Screen.LogInScreen.route) })
+               authViewModel = authViewModel,onNavigateToLogin = { navController.navigate(Screen.LogInScreen.route) },
+               onNaviGateBack = { navController.popBackStack() }
+
+           )
 
         }
 
-        composable(route=Screen.LogInScreen.route){
-            SignInScreen(authViewModel = authViewModel, onNavigateToSignUp =
-            { navController.navigate(Screen.SignUpScreen.route) }
-            ){
-                navController.navigate(Screen.ChatRoomsScreen.route)
-            }
+        composable(route = Screen.LogInScreen.route) {
+            SignInScreen(
+                authViewModel = authViewModel,
+                onNavigateToSignUp = { navController.navigate(Screen.SignUpScreen.route) },
+                onSignInSuccess = { navController.navigate(Screen.ChatRoomsScreen.route) },
+                onNaviGateBack = { navController.popBackStack() } // Pop back to previous screen
+            )
         }
         composable(Screen.ChatRoomsScreen.route) {
-            ChatRoomListScreen {
-                navController.navigate("${Screen.ChatScreen.route}/${it.id}")
-            }
+           val roomViewModel: RoomViewModel = viewModel()
+            ChatRoomListScreen(
+                roomViewModel = roomViewModel,
+                onJoinClicked = { room ->
+                    navController.navigate("${Screen.ChatScreen.route}/${room.id}")
+                },
+                onLogout = {
+                    navController.navigate(Screen.WelcomeScreen.route)
+
+
+                }
+            )
         }
         composable("${Screen.ChatScreen.route}/{roomId}") {
             val roomId: String = it
