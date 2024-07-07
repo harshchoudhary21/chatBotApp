@@ -72,6 +72,7 @@ fun ChatRoomListScreen(
                     IconButton(onClick = { showDropdownMenu = true }) {
                         Icon(Icons.Default.AccountCircle, contentDescription = "Account")
                     }
+
                     DropdownMenu(
                         expanded = showDropdownMenu,
                         onDismissRequest = { showDropdownMenu = false }
@@ -86,7 +87,13 @@ fun ChatRoomListScreen(
                         )
 
                     }
+                    Button(onClick = onLogout,
+                        modifier = Modifier.padding(start = 8.dp)) {
+                        Text("Logout")
+                    }
+
                 }
+
             )
         }
     ) { innerPadding ->
